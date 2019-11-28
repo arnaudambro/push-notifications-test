@@ -11,12 +11,11 @@ class NotificationService {
         },
         production: false // true for APN production environment, false for APN sandbox environment,
       },
-      // gcm: {
-      //     id: null,
-      //     phonegap: false, // phonegap compatibility mode, see below (defaults to false)
-      //     ...
-      // },
-      // isAlwaysUseFCM: false, // true all messages will be sent through node-gcm (which actually uses FCM)
+      gcm: {
+        id: process.env.API_GCM_KEY,
+        phonegap: false, // phonegap compatibility mode, see below (defaults to false)
+      },
+      isAlwaysUseFCM: false, // true all messages will be sent through node-gcm (which actually uses FCM)
     };
     this.push = new PushNotifications(this.config);
   }

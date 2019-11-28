@@ -1,4 +1,4 @@
-package com.front;
+package com.arnaudambro.pushtest;
 
 import com.facebook.react.ReactActivity;
 

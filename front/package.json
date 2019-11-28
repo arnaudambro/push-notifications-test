@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android2": "cd ./android && ./gradlew app:assembleDebug && ./gradlew installDebug",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
@@ -11,6 +12,7 @@
   },
   "dependencies": {
     "@react-native-community/push-notification-ios": "^1.0.3",
+    "@react-native-firebase/app": "^6.1.0",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-device-info": "^5.3.1",
