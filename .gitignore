@@ -1,6 +1,8 @@
 aps_development.cer
 CertificateSigningRequest.certSigningRequest
+google-services.json
 
 */certs
 */node_modules
 */variables.env
+
