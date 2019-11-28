@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1018969964324",
+    "firebase_url": "https://test-push-notifications-e8465.firebaseio.com",
+    "project_id": "test-push-notifications-e8465",
+    "storage_bucket": "test-push-notifications-e8465.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1018969964324:android:9e00b1948984d6e684fdb1",
+        "android_client_info": {
+          "package_name": "com.arnaudambro.pushtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1018969964324-2jm5m8rk6shrbsumbo2l6jd5fom69lor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU7q10v3l8_eBCktiPs6i9zYkdGgkQ_-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1018969964324-2jm5m8rk6shrbsumbo2l6jd5fom69lor.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

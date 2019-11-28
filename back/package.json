@@ -1,0 +1,12 @@
+{
+  "name": "back",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "node-pushnotifications": "^1.2.0"
+  }
+}

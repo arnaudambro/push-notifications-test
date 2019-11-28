@@ -1,0 +1,6 @@
+aps_development.cer
+CertificateSigningRequest.certSigningRequest
+
+*/certs
+*/node_modules
+*/variables.env
