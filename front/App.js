@@ -1,152 +1,42 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, View, Text, StatusBar, TouchableOpacity, AppState, Platform} from 'react-native';
-import NotificationsIOS, {NotificationsAndroid, PendingNotifications} from 'react-native-notifications';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { SafeAreaView, StyleSheet, View, Text, StatusBar, TouchableOpacity, Platform, Alert } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-
-const isIOS = Platform.OS === 'ios';
-const isAndroid = Platform.OS === 'android';
+import Notifications from './NotificationService'
 
 class App extends React.Component {
-  state = {
-    appState: AppState.currentState,
+  constructor(props) {
+    super(props);
+    Notifications.init(this.handleRegister);
+  }
+  
+  
+  handleRegister = async deviceToken => {
+    this.userId = DeviceInfo.getUniqueId();
+    this.registered = await fetch(`http://192.168.178.12:7777/save-token/${this.userId}/${deviceToken}`, {
+      method: 'POST',
+    }).then(res => res.ok);
   };
 
   componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
-    /* iOS */
-    if (isIOS) {
-      NotificationsIOS.requestPermissions();
-      NotificationsIOS.addEventListener('remoteNotificationsRegistered', this.onPushRegistered);
-      NotificationsIOS.addEventListener('remoteNotificationsRegistrationFailed', this.onPushRegistrationFailed);
-    }
-    /* Android */
-    if (isAndroid) {
-      NotificationsAndroid.setRegistrationTokenUpdateListener(this.onPushRegistered);
-    }
+    Notifications.listen(this.handleNotification);
   }
 
-  /*
-
-  APP STATE CHANGE
-
-  */
-  _handleAppStateChange = async nextAppState => {
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active' && this.registered) {
-      this.addNotificationsEventListeners();
-      if (isIOS) {
-        const notification = await PushNotificationIOS.getInitialNotification();
-        if (notification) {
-          this.onNotificationReceivedBackground(notification);
-        }
-      }
-      if (isAndroid) {
-        const notification = await PendingNotifications.getInitialNotification()
-        if (notification) {
-          this.onAndroidNotificationReceived(notification);
-        }
-      }
-    }
-    this.setState({appState: nextAppState});
+  handleNotification = (notification) => {
+    let customData = notification?.data?.customData;
+    if (!customData) return;
+    if (Platform.OS === 'android') customData = JSON.parse(customData);
+    // do what you need to do !
+    Alert.alert(Object.keys(customData)[0], customData[Object.keys(customData)[0]]);
   };
 
-  /*
-
-  REGISTRATION
-
-  */
-
-  onPushRegistered = async deviceToken => {
-    this.userId = DeviceInfo.getUniqueId();
-    if (!this.registered) {
-      this.registered = await fetch(`http://192.168.178.12:7777/save-token/${this.userId}/${deviceToken}`, {
-        method: 'POST',
-      }).then(res => res.ok);
-    }
-    if (this.registered) {
-      this.addNotificationsEventListeners();
-    }
-  };
-
-  onPushRegistrationFailed = error => {
-    console.error(error);
-  };
-
-  /*
-
-  LISTENERS SETUP / REMOVAL
-
-  */
-
-  addNotificationsEventListeners = () => {
-    if (isIOS) {
-      NotificationsIOS.addEventListener('notificationReceivedForeground', this.onNotificationReceivedForeground);
-      NotificationsIOS.addEventListener('notificationOpened', this.onNotificationOpened);
-      PushNotificationIOS.addEventListener('notification', this.onNotificationReceivedBackground);
-    }
-    if (isAndroid) {
-      NotificationsAndroid.setNotificationReceivedListener(this.onAndroidNotificationReceived);
-      NotificationsAndroid.setNotificationReceivedInForegroundListener(this.onAndroidNotificationReceived);
-      NotificationsAndroid.setNotificationOpenedListener(this.onAndroidNotificationReceived);
-    }
-  };
-
+  
   componentWillUnmount() {
-    // prevent memory leaks!
-    AppState.removeEventListener('change', this._handleAppStateChange);
-    if (isIOS) {
-      NotificationsIOS.removeEventListener('remoteNotificationsRegistered', this.onPushRegistered);
-      NotificationsIOS.removeEventListener('remoteNotificationsRegistrationFailed', this.onPushRegistrationFailed);
-      NotificationsIOS.removeEventListener('notificationReceivedForeground', this.onNotificationReceivedForeground);
-      NotificationsIOS.removeEventListener('notificationOpened', this.onNotificationOpened);
-    }
+    Notifications.delete();
   }
-
-  /*
-
-  LISTENERS HANDLERS
-
-  */
-
-  onAndroidNotificationReceived = notification => {
-    console.log('Notification Received - Android ', notification);
-  };
-
-  onNotificationReceivedForeground = (notification, completion) => {
-    if (completion) {
-      completion({alert: true, sound: false, badge: false});
-    }
-    console.log('Notification Received - Foreground', notification);
-    PushNotificationIOS.removeAllDeliveredNotifications();
-  };
-
-  onNotificationReceivedBackground = (notification, completion) => {
-    if (completion) {
-      completion({alert: true, sound: false, badge: false});
-    }
-    console.log('Notification Received - Background', notification);
-    PushNotificationIOS.removeAllDeliveredNotifications();
-  };
-
-  onNotificationOpened = (notification, completion, action) => {
-    console.log('Notification opened by device user', notification);
-    console.log(
-      `Notification opened with an action identifier: ${action.identifier} and response text: ${action.text}`,
-      notification,
-    );
-    completion();
-  };
-
-  /*
-
-  NOTIFICATION TRIGGER
-
-  */
-
 
   handleNotificationPressWithDelay = delay => async () => {
     const params = [this.userId, delay];
-    await fetch(`http://192.168.178.12:7777/test-send/${params.filter(p => p).join('/')}`)
+    await fetch(`http://{YOUR_IP}:7777/test-send/${params.filter(p => p).join('/')}`)
       .then(res => console.log({res}))
       .catch(error => console.log({error}));
   };
