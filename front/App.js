@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, View, Text, StatusBar, TouchableOpacity, Platform, Alert } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import Notifications from './NotificationService'
+import Notifications from './src/NotificationService'
 
 class App extends React.Component {
   constructor(props) {
